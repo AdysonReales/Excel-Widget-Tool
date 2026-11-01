@@ -14,8 +14,7 @@ async function setWidgetMode(enabled, persist = true) {
     if (persist) await fs.writeFile(path.join(app.getPath('userData'), 'widget-settings.json'), JSON.stringify({ widgetMode: enabled }), 'utf8');
     widgetMode = enabled;
     window.setAlwaysOnTop(!enabled);
-    if (enabled) window.moveBottom();
-    else { window.show(); window.focus(); }
+    if (!enabled) { window.show(); window.focus(); }
     return widgetMode;
   } finally { changingMode = false; }
 }
@@ -24,7 +23,6 @@ app.whenReady().then(async () => {
   let bounds = { width: 720, height: 570 };
   try { const saved = JSON.parse(syncFs.readFileSync(boundsFile, 'utf8')); if (Number.isFinite(saved.x) && Number.isFinite(saved.y) && Number.isFinite(saved.width) && Number.isFinite(saved.height) && screen.getAllDisplays().some(d => saved.x < d.workArea.x + d.workArea.width && saved.y < d.workArea.y + d.workArea.height && saved.x + saved.width > d.workArea.x && saved.y + saved.height > d.workArea.y)) bounds = saved; } catch {}
   window = new BrowserWindow({ ...bounds, minWidth: 420, minHeight: 360, frame: false, alwaysOnTop: true, backgroundColor: '#f8f5f2', title: 'Little Grid', webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, nodeIntegration: false } });
-  window.on('blur', () => { if (widgetMode && !window.isDestroyed() && !window.isMinimized()) window.moveBottom(); });
   window.on('close', () => { try { syncFs.writeFileSync(boundsFile, JSON.stringify(window.getBounds())); } catch (error) { console.error('Could not save window position:', error); } });
   try { const settings = JSON.parse(await fs.readFile(path.join(app.getPath('userData'), 'widget-settings.json'), 'utf8')); if (settings.widgetMode && !process.argv.includes('--window-mode')) await setWidgetMode(true, false); } catch (error) { if (error.code !== 'ENOENT') console.error('Could not restore desktop widget:', error); }
   window.loadFile(path.join(__dirname, '../shared/index.html'), { query: { desktop: '1' } });
