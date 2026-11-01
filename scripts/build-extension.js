@@ -1,0 +1,1 @@
+const fs = require('node:fs'); const path = require('node:path'); const root = path.join(__dirname, '..'); for (const file of ['index.html', 'style.css', 'csv.js', 'app.js']) fs.copyFileSync(path.join(root, 'shared', file), path.join(root, 'browser', file)); console.log('Browser extension files updated.');

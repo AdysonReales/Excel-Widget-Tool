@@ -1,0 +1,36 @@
+# Little Grid
+
+A small, editable spreadsheet for Windows and a matching Opera GX new-tab extension with a to-do list. Cells and tasks save automatically on the device.
+
+## Desktop widget
+
+Install [Node.js](https://nodejs.org/) (LTS), then in this folder run:
+
+```powershell
+npm install
+npm start
+```
+
+The app opens as a resizable window. Enable **Open at Windows sign-in** at the bottom to launch it when you sign in. The window is a regular desktop window, not a Windows desktop gadget or wallpaper. Keep the project folder and its installed dependencies in place so Windows can launch it at sign-in. Desktop data is stored in Electron's user data directory (on Windows, typically `%APPDATA%/little-grid/grid.json`).
+
+## Opera GX extension
+
+1. In Opera GX, open `opera://extensions` and enable **Developer mode**.
+2. Choose **Load unpacked** and select this project's `browser` folder.
+3. Open a new tab. The spreadsheet and to-do list save locally in the browser's extension storage.
+
+The desktop app and browser extension keep **separate** data. Export a CSV in one and import it in the other to transfer spreadsheet values. Browser to-dos are not included in CSV. Removing the extension may remove its data; export the sheet first.
+
+## Spreadsheet notes
+
+Click a cell to edit it and use **Add row** for more space. Import and export use CSV, which Excel can open and save. Import replaces the current sheet after confirmation. This is a lightweight grid, not Microsoft Excel: formulas, formatting, multiple sheets, and `.xlsx` files are not supported. Export CSV regularly for a portable backup.
+
+## Structure
+
+- `shared/` — source for the common UI and spreadsheet logic.
+- `desktop/` — Electron window, local persistence, and startup integration.
+- `browser/` — ready-to-load extension; its UI files are generated from `shared/`.
+- `scripts/` — extension build script.
+- `tests/` — CSV parsing and export tests.
+
+After editing shared files, run `npm run build:extension` to refresh the browser copy. Run `npm test` for the CSV tests.

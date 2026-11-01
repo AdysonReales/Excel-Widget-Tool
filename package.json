@@ -1,0 +1,15 @@
+{
+  "name": "little-grid",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A little spreadsheet widget and new-tab companion",
+  "main": "desktop/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build:extension": "node scripts/build-extension.js",
+    "test": "node tests/csv.test.js"
+  },
+  "devDependencies": {
+    "electron": "^33.4.11"
+  }
+}
