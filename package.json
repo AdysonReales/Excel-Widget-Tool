@@ -7,12 +7,13 @@
   "scripts": {
     "start": "electron .",
     "build:extension": "node scripts/build-extension.js",
-    "test": "node tests/csv.test.js && node tests/formula.test.js",
+    "test": "node tests/csv.test.js && node tests/formula.test.js && node tests/background.test.js",
     "test:resize": "node tests/resize-browser.cjs",
     "test:format": "node tests/format-browser.cjs",
     "test:desktop-extras": "node tests/desktop-extras-browser.cjs",
     "test:electron": "node tests/desktop-electron.cjs",
     "test:whiteboard": "node tests/whiteboard-browser.cjs && node tests/whiteboard-extension.cjs",
+    "test:extension": "node tests/extension-integration.cjs",
     "dist": "electron-builder --win nsis --publish never"
   },
   "devDependencies": {

@@ -1,1 +1,9 @@
-{"manifest_version":3,"name":"Little Grid — New Tab","version":"1.0.0","description":"A little spreadsheet and to-do list for your new tab.","permissions":["storage"],"chrome_url_overrides":{"newtab":"index.html"}}
+{
+  "manifest_version": 3,
+  "name": "Little Grid",
+  "version": "1.0.1",
+  "description": "Open your spreadsheet, whiteboard and to-do list in Opera GX.",
+  "permissions": ["storage", "tabs"],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_title": "Open Little Grid" }
+}

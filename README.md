@@ -34,14 +34,16 @@ The app opens as a resizable window. Enable **Open at Windows sign-in** at the b
 
 ## Opera GX extension
 
-[Download the Opera GX extension ZIP](https://github.com/AdysonReales/Excel-Widget-Tool/releases/download/v1.0.0-whiteboard/Little-Grid-Opera-GX.zip)
+[Download the Opera GX extension ZIP](https://github.com/AdysonReales/Excel-Widget-Tool/releases/download/v1.0.1-opera/Little-Grid-Opera-GX.zip)
 
 1. Extract the ZIP to a folder that will remain on your computer.
 2. In Opera GX, open `opera://extensions` and enable **Developer mode**.
 3. Choose **Load unpacked** and select the extracted folder containing `manifest.json`.
-4. Open a new tab. The spreadsheet and to-do list save locally in the browser's extension storage.
+4. Click the **Little Grid** extension button to open the workspace. You may need to pin it from Opera's extensions menu. The spreadsheet, whiteboard, and to-do list save locally in the browser's extension storage.
 
-After updating this folder, open `opera://extensions`, click the reload button on Little Grid, and open a new tab to see the latest Excel and Whiteboard buttons.
+Opera GX blocks the standard new-tab override used by some Chrome extensions. Little Grid attempts to open its workspace when a newly created tab reaches Opera's start page; if Opera does not expose or allow that redirect, use the extension button instead. The extension requests the tabs permission for this new-tab behavior.
+
+After updating this folder, open `opera://extensions`, click the reload button on Little Grid, and use the extension button to see the latest Excel and Whiteboard controls.
 
 To keep an existing unpacked extension's local data, update its existing folder and reload that extension. Loading a separate folder can create a separate extension with separate storage.
 

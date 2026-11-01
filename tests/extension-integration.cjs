@@ -1,0 +1,33 @@
+const { chromium } = require('playwright-core');
+const fs = require('node:fs');
+const path = require('node:path');
+const assert = require('node:assert/strict');
+(async () => {
+  const root = path.resolve(__dirname, '..');
+  const extension = path.join(root, 'browser');
+  fs.mkdirSync(path.join(root, 'dist'), { recursive: true });
+  const profile = fs.mkdtempSync(path.join(root, 'dist', 'extension-test-'));
+  const context = await chromium.launchPersistentContext(profile, {
+    headless: true,
+    executablePath: process.env.EDGE_PATH || 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+    args: [`--disable-extensions-except=${extension}`, `--load-extension=${extension}`]
+  });
+  try {
+    let worker = context.serviceWorkers()[0];
+    if (!worker) worker = await context.waitForEvent('serviceworker', { timeout: 15000 });
+    const id = new URL(worker.url()).host;
+    const page = await context.newPage();
+    await page.goto(`chrome-extension://${id}/index.html`);
+    await page.waitForSelector('#grid td input');
+    await page.locator('#grid td input').first().fill('Saved cell');
+    await page.getByRole('button', { name: /Whiteboard/ }).click();
+    const canvas = page.locator('#board-canvas'); const box = await canvas.boundingBox();
+    await page.mouse.move(box.x + 30, box.y + 30); await page.mouse.down(); await page.mouse.move(box.x + 80, box.y + 30); await page.mouse.up();
+    await page.waitForFunction(() => document.getElementById('status').textContent === 'All changes saved');
+    await page.reload(); await page.getByRole('button', { name: /Whiteboard/ }).click();
+    await page.waitForFunction(() => document.querySelector('#board-canvas').getContext('2d').getImageData(50,30,1,1).data[3] > 0);
+    await page.getByRole('button', { name: /Excel/ }).click();
+    assert.equal(await page.locator('#grid td input').first().inputValue(), 'Saved cell');
+    console.log('PASS: actual unpacked extension loads, saves, reloads, and restores sheet and whiteboard');
+  } finally { await context.close(); }
+})().catch(error => { console.error(error); process.exitCode = 1; });
