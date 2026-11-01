@@ -6,16 +6,16 @@ An editable Excel-like grid for the Windows startup screen and Opera GX, with a 
 
 ### Download for Windows
 
-[Download Little Grid for Windows (.exe)](https://github.com/AdysonReales/Excel-Widget-Tool/releases/download/v1.0.0-desktop-widget/Little-Grid-Setup.exe)
+[Download Little Grid for Windows (.exe)](https://github.com/AdysonReales/Excel-Widget-Tool/releases/download/v1.0.0-editable-widget/Little-Grid-Setup.exe)
 
 1. Download and run `Little-Grid-Setup.exe`. Windows may warn you because the installer is not code signed.
 2. Open Little Grid from the Start menu. Node.js and PowerShell are not needed to use the installer.
 
 Development builds are also available from [GitHub Actions](https://github.com/AdysonReales/Excel-Widget-Tool/actions/workflows/windows.yml).
 
-Drag the widget's top bar to move it; resize it from its edges. It remembers its position. Check **Pin to desktop** to place it on the Windows desktop, behind regular windows; uncheck it to return to the always-on-top window. Desktop pinning uses Windows Explorer's desktop layer and may behave differently between Windows versions or after Explorer restarts. If the desktop layer cannot be found, the app remains in normal window mode.
+Drag the widget's top bar to move it; resize it from its edges. It remembers its position. Check **Pin to desktop** to keep it behind other windows when it loses focus, and click it to edit. It remains a window above the desktop icons and may be hidden by Show Desktop. Uncheck it to return to the always-on-top window.
 
-If the pinned window becomes inaccessible, close Little Grid using Task Manager and launch its executable with the `--window-mode` argument to temporarily start in normal mode. Then toggle **Pin to desktop** on and off to save the normal mode preference.
+If the widget is hidden, select Little Grid on the taskbar to bring it back.
 
 ### Run or build from source
 
