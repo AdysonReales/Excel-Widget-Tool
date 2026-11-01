@@ -1,6 +1,6 @@
-# Little Grid
+# Excel-Widget-Tool
 
-A small, editable spreadsheet for Windows and a matching Opera GX new-tab extension with a to-do list. Cells and tasks save automatically on the device.
+An editable Excel-like grid for the Windows startup screen and Opera GX, with a browser to-do list. Cells and tasks save automatically on the device.
 
 ## Desktop widget
 
