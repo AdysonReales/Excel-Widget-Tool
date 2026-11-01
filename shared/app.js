@@ -1,13 +1,18 @@
 (() => {
 const $ = id => document.getElementById(id); const isDesktop = Boolean(window.desktop); document.body.classList.toggle('desktop', isDesktop);
-if (isDesktop) { $('minimize').onclick = () => desktop.minimize(); $('close').onclick = () => desktop.close(); }
-const storage = isDesktop ? { load: () => desktop.load(), save: data => desktop.save(data) } : { load: async () => (await chrome.storage.local.get('littleGrid')).littleGrid, save: data => chrome.storage.local.set({ littleGrid: data }) };
-const state = { cells: Array.from({ length: 20 }, () => Array(8).fill('')), todos: [], columnWidths: [], rowHeights: [], cellStyles: {} }; let timer, saveQueue = Promise.resolve(); let revision = 0;
+if (isDesktop) { $('minimize').onclick = () => desktop.minimize(); $('close').onclick = async () => { try { await flushSave(); desktop.close(); } catch { status('Could not save — please try again', true); } }; }
+const storage = isDesktop ? { load: () => desktop.load(), save: data => desktop.save(data) } : {
+  load: () => new Promise((resolve, reject) => chrome.storage.local.get('littleGrid', result => { const error = chrome.runtime?.lastError; if (error) reject(new Error(error.message)); else resolve(result?.littleGrid); })),
+  save: data => new Promise((resolve, reject) => chrome.storage.local.set({ littleGrid: data }, () => { const error = chrome.runtime?.lastError; if (error) reject(new Error(error.message)); else resolve(); }))
+};
+const state = { cells: Array.from({ length: 20 }, () => Array(8).fill('')), todos: [], columnWidths: [], rowHeights: [], cellStyles: {} }; let timer, saveQueue = Promise.resolve(); let revision = 0, dirty = false;
 const loadStorage = storage.load;
-storage.load = async () => { const data = await loadStorage(); state.cellStyles = data?.cellStyles || {}; if (isDesktop && Array.isArray(data?.drawings)) state.drawings = data.drawings; GridFormat.configure({ cellStyles: state.cellStyles, onChange: styles => { state.cellStyles = styles; save(); } }); return data; };
+storage.load = async () => { try { const data = await loadStorage(); state.cellStyles = data?.cellStyles || {}; if (isDesktop && Array.isArray(data?.drawings)) state.drawings = data.drawings; if (data?.whiteboard && typeof data.whiteboard === 'object') state.whiteboard = data.whiteboard; GridFormat.configure({ cellStyles: state.cellStyles, onChange: styles => { state.cellStyles = styles; save(); } }); window.LittleGridWorkspace.loaded = true; document.dispatchEvent(new Event('littlegrid-loaded')); return data; } catch (error) { window.LittleGridWorkspace.loadError = true; document.dispatchEvent(new Event('littlegrid-load-error')); throw error; } };
 function status(message, error = false) { $('status').textContent = message; $('status').classList.toggle('error', error); }
-function save() { const current = ++revision; status('Saving…'); clearTimeout(timer); timer = setTimeout(() => { const snapshot = JSON.parse(JSON.stringify(state)); saveQueue = saveQueue.catch(() => {}).then(() => storage.save(snapshot)); saveQueue.then(() => { if (revision === current) status('All changes saved'); }).catch(() => { if (revision === current) status('Could not save — try editing again', true); }); }, 250); }
-if (isDesktop) window.LittleGridDesktop = { state, save, status };
+function flushSave() { clearTimeout(timer); timer = undefined; if (!dirty) return saveQueue; const current = revision, snapshot = JSON.parse(JSON.stringify(state)); dirty = false; saveQueue = saveQueue.catch(() => {}).then(() => storage.save(snapshot)).then(() => { if (revision === current) status('All changes saved'); }).catch(error => { dirty = true; if (revision === current) status('Could not save — try editing again', true); throw error; }); return saveQueue; }
+function save() { if (window.LittleGridWorkspace.loadError) { status('Could not load saved data — reload to retry', true); return; } revision++; dirty = true; status('Saving…'); clearTimeout(timer); timer = setTimeout(() => { flushSave().catch(() => {}); }, 250); }
+window.LittleGridWorkspace = { state, save, status };
+if (isDesktop) window.LittleGridDesktop = window.LittleGridWorkspace;
 function refreshValues() { const value = Formula.calculate(state.cells); $('grid').querySelectorAll('td input').forEach(input => { const r = Number(input.dataset.row), c = Number(input.dataset.col), computed = value(r, c); if (input !== document.activeElement) input.value = GridFormat.display(r, c, computed); GridFormat.updateValue(input, computed); }); }
 $('grid').addEventListener('refresh-formatted-values', refreshValues);
 function focusCell(r, c) { const input = $('grid').querySelector(`input[data-row="${r}"][data-col="${c}"]`); if (input) { input.focus(); input.select(); } }

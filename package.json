@@ -12,6 +12,7 @@
     "test:format": "node tests/format-browser.cjs",
     "test:desktop-extras": "node tests/desktop-extras-browser.cjs",
     "test:electron": "node tests/desktop-electron.cjs",
+    "test:whiteboard": "node tests/whiteboard-browser.cjs && node tests/whiteboard-extension.cjs",
     "dist": "electron-builder --win nsis --publish never"
   },
   "devDependencies": {

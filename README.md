@@ -6,7 +6,7 @@ An editable Excel-like grid for the Windows startup screen and Opera GX, with a 
 
 ### Download for Windows
 
-[Download Little Grid for Windows (.exe)](https://github.com/AdysonReales/Excel-Widget-Tool/releases/download/v1.0.0-desktop-insert/Little-Grid-Setup.exe)
+[Download Little Grid for Windows (.exe)](https://github.com/AdysonReales/Excel-Widget-Tool/releases/download/v1.0.0-whiteboard/Little-Grid-Setup.exe)
 
 1. Download and run `Little-Grid-Setup.exe`. Windows may warn you because the installer is not code signed.
 2. Open Little Grid from the Start menu. Node.js and PowerShell are not needed to use the installer.
@@ -16,6 +16,8 @@ Development builds are also available from [GitHub Actions](https://github.com/A
 Drag the widget's top bar to move it; resize it from its edges. It remembers its position. Check **Pin to desktop** to let other windows appear over it, and click it to edit. It remains a normal window above desktop icons and may be hidden by Show Desktop. Uncheck it to return to the always-on-top window.
 
 If the widget is hidden, select Little Grid on the taskbar to bring it back.
+
+Select **Whiteboard** above the formatting toolbar to sketch, and **Excel** to return to the spreadsheet. Choose Draw or Erase, set a color and size, and sketch on the white canvas. Choose Move and drag to pan across the board; use the mouse wheel or zoom buttons to zoom and Home to return to the starting view. Undo removes the most recent stroke, and Clear all asks for confirmation before removing the drawing. The whiteboard saves locally with the sheet. CSV export includes only spreadsheet cell contents, not the whiteboard. Desktop and Opera keep separate local copies.
 
 ### Run or build from source
 
@@ -32,9 +34,16 @@ The app opens as a resizable window. Enable **Open at Windows sign-in** at the b
 
 ## Opera GX extension
 
-1. In Opera GX, open `opera://extensions` and enable **Developer mode**.
-2. Choose **Load unpacked** and select this project's `browser` folder.
-3. Open a new tab. The spreadsheet and to-do list save locally in the browser's extension storage.
+[Download the Opera GX extension ZIP](https://github.com/AdysonReales/Excel-Widget-Tool/releases/download/v1.0.0-whiteboard/Little-Grid-Opera-GX.zip)
+
+1. Extract the ZIP to a folder that will remain on your computer.
+2. In Opera GX, open `opera://extensions` and enable **Developer mode**.
+3. Choose **Load unpacked** and select the extracted folder containing `manifest.json`.
+4. Open a new tab. The spreadsheet and to-do list save locally in the browser's extension storage.
+
+After updating this folder, open `opera://extensions`, click the reload button on Little Grid, and open a new tab to see the latest Excel and Whiteboard buttons.
+
+To keep an existing unpacked extension's local data, update its existing folder and reload that extension. Loading a separate folder can create a separate extension with separate storage.
 
 The desktop app and browser extension keep **separate** data. Export a CSV in one and import it in the other to transfer spreadsheet values. Browser to-dos are not included in CSV. Removing the extension may remove its data; export the sheet first.
 
@@ -48,7 +57,7 @@ Select a cell to format it using the toolbar: font, size, bold, italic, underlin
 
 In the Windows app, the Edit and Insert toolbar also includes single-cell cut/copy/paste and format painter; a conditional rule that highlights a cell when its value exceeds a threshold; table-style formatting for a selected range; and a pivot summary that groups one column and sums another. The pivot summary is an on-screen view and is not saved as a pivot table. Pictures (PNG, JPEG, and WebP up to 2 MB), simple shapes, two clip-art symbols, a three-step process diagram, and a primary-screen screenshot can be inserted as movable objects. Drag an object's title bar to move it, drag its lower-right corner to resize it, or use × to remove it. Objects save locally with the sheet. The screenshot command captures the entire primary screen after confirmation.
 
-These are simplified tools: table styling does not create a sortable Excel table; the pivot summary is not a full Excel PivotTable; the process diagram is not editable SmartArt; and merge cells, wrap text, and advanced conditional formatting are not yet supported. The Opera GX extension remains at the previous version.
+These are simplified tools: table styling does not create a sortable Excel table; the pivot summary is not a full Excel PivotTable; the process diagram is not editable SmartArt; and merge cells, wrap text, and advanced conditional formatting are not yet supported. These insert tools are desktop-only; the local Opera GX extension also includes the whiteboard.
 
 Import and export use CSV, which Excel can open and save. Import replaces the current sheet after confirmation; CSV export contains the entered values and formula text, but not formatting, dimensions, or inserted objects. This lightweight grid does not support multiple sheets, `.xlsx` files, or the full range of Excel formulas. Export CSV regularly for a portable backup of cell contents.
 
@@ -60,4 +69,4 @@ Import and export use CSV, which Excel can open and save. Import replaces the cu
 - `scripts/` — extension build script.
 - `tests/` — CSV parsing and export tests.
 
-Run `npm test` for the CSV and formula tests. On Windows with Microsoft Edge installed, run `npm run test:resize`, `npm run test:format`, and `npm run test:desktop-extras` for the browser-based tests. Run `npm run test:electron` for an isolated app restart test. The `browser/` folder is the previous Opera version; `npm run build:extension` deliberately updates it from shared source and should only be run when an Opera update is intended.
+Run `npm test` for the CSV and formula tests. On Windows with Microsoft Edge installed, run `npm run test:resize`, `npm run test:format`, `npm run test:desktop-extras`, and `npm run test:whiteboard` for the browser-based tests. Run `npm run test:electron` for an isolated app restart test. The `browser/` folder contains the locally updated Opera extension; `npm run build:extension` refreshes it from shared source.

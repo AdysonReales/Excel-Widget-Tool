@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain, screen, desktopCapturer, session, clipboard
 const path = require('node:path');
 const fs = require('node:fs/promises');
 const syncFs = require('node:fs');
+if (!app.isPackaged && process.env.LITTLE_GRID_TEST_DATA_DIR) app.setPath('userData', path.resolve(process.env.LITTLE_GRID_TEST_DATA_DIR));
 let window;
 let widgetMode = false;
 let changingMode = false;

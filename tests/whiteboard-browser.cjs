@@ -1,0 +1,41 @@
+const { chromium } = require('playwright-core');
+const { pathToFileURL } = require('node:url');
+const path = require('node:path');
+const assert = require('node:assert/strict');
+(async () => {
+  const browser = await chromium.launch({ headless: true, executablePath: process.env.EDGE_PATH || 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe' });
+  try {
+    const page = await browser.newPage({ viewport: { width: 1200, height: 900 }, deviceScaleFactor: 1 });
+    await page.addInitScript(() => { window.desktop = { load: async () => JSON.parse(localStorage.getItem('sheet') || '{"cells":[["keep me"]],"todos":[]}'), save: async data => localStorage.setItem('sheet', JSON.stringify(data)), getStartup: async () => false, getWidget: async () => false, setStartup: async x => x, setWidget: async x => x, close() { sessionStorage.setItem('closed', 'yes'); }, minimize() {} }; });
+    await page.goto(pathToFileURL(path.join(__dirname, '../shared/index.html')).href);
+    const tab = page.getByRole('button', { name: /Whiteboard/ }); await tab.click();
+    assert.equal(await page.locator('#grid').isVisible(), false);
+    const canvas = page.locator('#board-canvas'); await canvas.waitFor({ state: 'visible' });
+    let box = await canvas.boundingBox(); const x = box.x + 90, y = box.y + 90;
+    await page.mouse.move(x, y); await page.mouse.down(); await page.mouse.move(x + 60, y, { steps: 5 }); await page.mouse.up();
+    await page.waitForFunction(() => JSON.parse(localStorage.getItem('sheet') || '{}').whiteboard?.strokes?.length === 1);
+    assert.equal(await canvas.evaluate(e => e.getContext('2d').getImageData(110, 90, 1, 1).data[3] > 0), true);
+    await page.getByRole('button', { name: /Whiteboard/ }).click();
+    await page.getByRole('button', { name: /Excel/ }).click();
+    assert.equal(await page.locator('#grid td input').first().inputValue(), 'keep me');
+    assert.equal(await page.locator('#format-toolbar').isVisible(), true);
+    await page.reload(); await tab.click(); await canvas.waitFor({ state: 'visible' });
+    await page.waitForFunction(() => document.querySelector('#board-canvas').getContext('2d').getImageData(110, 90, 1, 1).data[3] > 0);
+    box = await canvas.boundingBox(); await page.getByRole('button', { name: /Erase/ }).click();
+    await page.mouse.move(box.x + 110, box.y + 90); await page.mouse.down(); await page.mouse.move(box.x + 130, box.y + 90); await page.mouse.up();
+    assert.equal(await canvas.evaluate(e => e.getContext('2d').getImageData(120, 90, 1, 1).data[3]), 0);
+    await page.getByRole('button', { name: /Move/ }).click(); await page.mouse.move(box.x + 150, box.y + 150); await page.mouse.down(); await page.mouse.move(box.x + 200, box.y + 170); await page.mouse.up();
+    await page.getByRole('button', { name: 'Zoom in' }).click(); assert.notEqual(await page.locator('#board-zoom').textContent(), '100%');
+    await page.getByRole('button', { name: 'Home', exact: true }).click(); assert.equal(await page.locator('#board-zoom').textContent(), '100%');
+    await page.getByRole('button', { name: 'Undo' }).click(); assert.equal(await canvas.evaluate(e => e.getContext('2d').getImageData(120, 90, 1, 1).data[3] > 0), true);
+    page.once('dialog', dialog => dialog.dismiss()); await page.getByRole('button', { name: 'Clear all' }).click();
+    assert.equal(await canvas.evaluate(e => e.getContext('2d').getImageData(120, 90, 1, 1).data[3] > 0), true);
+    page.once('dialog', dialog => dialog.accept()); await page.getByRole('button', { name: 'Clear all' }).click();
+    await page.waitForFunction(() => JSON.parse(localStorage.getItem('sheet') || '{}').whiteboard?.strokes?.length === 0);
+    await page.getByRole('button', { name: /Draw/ }).click(); await page.mouse.move(box.x + 50, box.y + 50); await page.mouse.down(); await page.mouse.up();
+    await page.locator('#close').click();
+    await page.waitForFunction(() => sessionStorage.getItem('closed') === 'yes');
+    assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('sheet')).whiteboard.strokes.length), 1);
+    console.log('PASS: draw, erase, pan, zoom, undo, clear, tab switching, persistence, and immediate close');
+  } finally { await browser.close(); }
+})().catch(error => { console.error(error); process.exitCode = 1; });
