@@ -7,7 +7,7 @@
   "scripts": {
     "start": "electron .",
     "build:extension": "node scripts/build-extension.js",
-    "test": "node tests/csv.test.js",
+    "test": "node tests/csv.test.js && node tests/formula.test.js",
     "dist": "electron-builder --win nsis --publish never"
   },
   "devDependencies": {
