@@ -1,5 +1,6 @@
 (() => {
 const $ = id => document.getElementById(id); const isDesktop = Boolean(window.desktop); document.body.classList.toggle('desktop', isDesktop);
+if (isDesktop) { $('minimize').onclick = () => desktop.minimize(); $('close').onclick = () => desktop.close(); }
 const storage = isDesktop ? { load: () => desktop.load(), save: data => desktop.save(data) } : { load: async () => (await chrome.storage.local.get('littleGrid')).littleGrid, save: data => chrome.storage.local.set({ littleGrid: data }) };
 const state = { cells: Array.from({ length: 20 }, () => Array(8).fill('')), todos: [] }; let timer, saveQueue = Promise.resolve(); let revision = 0;
 function status(message, error = false) { $('status').textContent = message; $('status').classList.toggle('error', error); }
