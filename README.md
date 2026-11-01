@@ -6,7 +6,7 @@ An editable Excel-like grid for the Windows startup screen and Opera GX, with a 
 
 ### Download for Windows
 
-[Download Little Grid for Windows (.exe)](https://github.com/AdysonReales/Excel-Widget-Tool/releases/download/v1.0.0-resizable-grid/Little-Grid-Setup.exe)
+[Download Little Grid for Windows (.exe)](https://github.com/AdysonReales/Excel-Widget-Tool/releases/download/v1.0.0-cell-formatting/Little-Grid-Setup.exe)
 
 1. Download and run `Little-Grid-Setup.exe`. Windows may warn you because the installer is not code signed.
 2. Open Little Grid from the Start menu. Node.js and PowerShell are not needed to use the installer.
@@ -44,7 +44,9 @@ Click a cell to edit it. Add rows or columns with the buttons, press Enter to mo
 
 Drag the right edge of a column letter to resize the column, or the bottom edge of a row number to resize the row. Sizes save automatically on this device. You can also focus a resize handle with Tab and use the arrow keys. CSV transfers cell contents, not row or column sizes.
 
-Import and export use CSV, which Excel can open and save. Import replaces the current sheet after confirmation; CSV export contains the entered values and formula text. This lightweight grid does not support Excel formatting, multiple sheets, `.xlsx` files, or the full range of Excel formulas. Export CSV regularly for a portable backup.
+Select a cell to format it using the toolbar: font, size, bold, italic, underline, text and fill colors, alignment, border, basic number and percent displays, and color presets. Use Clear to remove its formatting. Cell formatting is saved locally with the sheet.
+
+Import and export use CSV, which Excel can open and save. Import replaces the current sheet after confirmation; CSV export contains the entered values and formula text, but not formatting or dimensions. This lightweight grid does not support multiple sheets, `.xlsx` files, or the full range of Excel formulas. Export CSV regularly for a portable backup.
 
 ## Structure
 
@@ -54,4 +56,4 @@ Import and export use CSV, which Excel can open and save. Import replaces the cu
 - `scripts/` — extension build script.
 - `tests/` — CSV parsing and export tests.
 
-After editing shared files, run `npm run build:extension` to refresh the browser copy. Run `npm test` for the CSV and formula tests. On Windows with Microsoft Edge installed, run `npm run test:resize` for the browser-based resizing test.
+After editing shared files, run `npm run build:extension` to refresh the browser copy. Run `npm test` for the CSV and formula tests. On Windows with Microsoft Edge installed, run `npm run test:resize` and `npm run test:format` for the browser-based tests.

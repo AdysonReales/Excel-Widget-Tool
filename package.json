@@ -9,6 +9,7 @@
     "build:extension": "node scripts/build-extension.js",
     "test": "node tests/csv.test.js && node tests/formula.test.js",
     "test:resize": "node tests/resize-browser.cjs",
+    "test:format": "node tests/format-browser.cjs",
     "dist": "electron-builder --win nsis --publish never"
   },
   "devDependencies": {
