@@ -4,9 +4,19 @@ An editable Excel-like grid for the Windows startup screen and Opera GX, with a 
 
 ## Desktop widget
 
-Download the Windows installer from the repository's Actions build artifacts when available, run it, and open Little Grid from the Start menu. Drag its top bar to move it; resize from its edges. It stays above other windows and remembers its position. The close and minimize buttons are at the top right.
+### Download for Windows
 
-To build an installer yourself, run `npm install` and `npm run dist` on Windows; the installer is placed in `dist/`. Windows may warn about the installer because it is not code signed.
+[Download the Windows installer build](https://github.com/AdysonReales/Excel-Widget-Tool/actions/workflows/windows.yml)
+
+1. Sign in to GitHub, open the latest successful **Build Windows installer** run, and download **Little-Grid-Windows-Installer** under Artifacts.
+2. Extract the downloaded ZIP and run `Little Grid Setup 1.0.0.exe`. Windows may warn you because the installer is not code signed.
+3. Open Little Grid from the Start menu. Node.js and PowerShell are not needed to use the installer.
+
+Drag the widget's top bar to move it; resize it from its edges. It stays above other windows and remembers its position. The close and minimize buttons are at the top right.
+
+### Run or build from source
+
+To build an installer yourself, run `npm install` and `npm run dist` on Windows; the installer is placed in `dist/`.
 
 Install [Node.js](https://nodejs.org/) (LTS), then in this folder run:
 
