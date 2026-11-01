@@ -6,7 +6,7 @@ An editable Excel-like grid for the Windows startup screen and Opera GX, with a 
 
 ### Download for Windows
 
-[Download Little Grid for Windows (.exe)](https://github.com/AdysonReales/Excel-Widget-Tool/releases/download/v1.0.0-dynamic-grid/Little-Grid-Setup.exe)
+[Download Little Grid for Windows (.exe)](https://github.com/AdysonReales/Excel-Widget-Tool/releases/download/v1.0.0-resizable-grid/Little-Grid-Setup.exe)
 
 1. Download and run `Little-Grid-Setup.exe`. Windows may warn you because the installer is not code signed.
 2. Open Little Grid from the Start menu. Node.js and PowerShell are not needed to use the installer.
@@ -42,6 +42,8 @@ The desktop app and browser extension keep **separate** data. Export a CSV in on
 
 Click a cell to edit it. Add rows or columns with the buttons, press Enter to move down (and create a row at the bottom), or paste a rectangular selection copied from a spreadsheet. The sheet supports basic formulas such as `=A1+B1*2` and `=SUM(A1:A3)`, plus AVERAGE, MIN, MAX and arithmetic; formulas recalculate when cells change. Click a calculated cell to edit its formula. Up to 1,000 rows and 100 columns can be imported or pasted.
 
+Drag the right edge of a column letter to resize the column, or the bottom edge of a row number to resize the row. Sizes save automatically on this device. You can also focus a resize handle with Tab and use the arrow keys. CSV transfers cell contents, not row or column sizes.
+
 Import and export use CSV, which Excel can open and save. Import replaces the current sheet after confirmation; CSV export contains the entered values and formula text. This lightweight grid does not support Excel formatting, multiple sheets, `.xlsx` files, or the full range of Excel formulas. Export CSV regularly for a portable backup.
 
 ## Structure
@@ -52,4 +54,4 @@ Import and export use CSV, which Excel can open and save. Import replaces the cu
 - `scripts/` — extension build script.
 - `tests/` — CSV parsing and export tests.
 
-After editing shared files, run `npm run build:extension` to refresh the browser copy. Run `npm test` for the CSV tests.
+After editing shared files, run `npm run build:extension` to refresh the browser copy. Run `npm test` for the CSV and formula tests. On Windows with Microsoft Edge installed, run `npm run test:resize` for the browser-based resizing test.
