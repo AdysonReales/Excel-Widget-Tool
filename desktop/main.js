@@ -2,18 +2,48 @@ const { app, BrowserWindow, ipcMain, screen } = require('electron');
 const path = require('node:path');
 const fs = require('node:fs/promises');
 const syncFs = require('node:fs');
+const { execFile } = require('node:child_process');
+const { promisify } = require('node:util');
+const run = promisify(execFile);
 let window;
-app.whenReady().then(() => {
+let widgetMode = false;
+let changingMode = false;
+async function setWidgetMode(enabled, persist = true) {
+  if (changingMode) throw new Error('A display change is already in progress.');
+  if (enabled === widgetMode) return widgetMode;
+  if (process.platform !== 'win32') throw new Error('Desktop widget mode is only available on Windows.');
+  changingMode = true;
+  const bounds = window.getBounds();
+  try {
+    if (enabled) window.setAlwaysOnTop(false);
+    const handle = window.getNativeWindowHandle();
+    const handleValue = handle.length === 8 ? handle.readBigUInt64LE().toString() : String(handle.readUInt32LE());
+    const helper = path.join(__dirname, 'desktop-layer.ps1').replace(/app\.asar([\\/])/, 'app.asar.unpacked$1');
+    await run('powershell.exe', ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', helper, '-Handle', handleValue, '-Mode', enabled ? 'attach' : 'detach'], { windowsHide: true, timeout: 10000 });
+    widgetMode = enabled;
+    window.setBounds(bounds);
+    if (!enabled) { window.setAlwaysOnTop(true); window.show(); window.focus(); }
+    if (persist) await fs.writeFile(path.join(app.getPath('userData'), 'widget-settings.json'), JSON.stringify({ widgetMode }), 'utf8');
+    return widgetMode;
+  } catch (error) {
+    if (!widgetMode) window.setAlwaysOnTop(true);
+    throw error;
+  } finally { changingMode = false; }
+}
+app.whenReady().then(async () => {
   const boundsFile = path.join(app.getPath('userData'), 'window.json');
   let bounds = { width: 720, height: 570 };
   try { const saved = JSON.parse(syncFs.readFileSync(boundsFile, 'utf8')); if (Number.isFinite(saved.x) && Number.isFinite(saved.y) && Number.isFinite(saved.width) && Number.isFinite(saved.height) && screen.getAllDisplays().some(d => saved.x < d.workArea.x + d.workArea.width && saved.y < d.workArea.y + d.workArea.height && saved.x + saved.width > d.workArea.x && saved.y + saved.height > d.workArea.y)) bounds = saved; } catch {}
   window = new BrowserWindow({ ...bounds, minWidth: 420, minHeight: 360, frame: false, alwaysOnTop: true, backgroundColor: '#f8f5f2', title: 'Little Grid', webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, nodeIntegration: false } });
   window.on('close', () => { try { syncFs.writeFileSync(boundsFile, JSON.stringify(window.getBounds())); } catch (error) { console.error('Could not save window position:', error); } });
+  try { const settings = JSON.parse(await fs.readFile(path.join(app.getPath('userData'), 'widget-settings.json'), 'utf8')); if (settings.widgetMode && !process.argv.includes('--window-mode')) await setWidgetMode(true, false); } catch (error) { if (error.code !== 'ENOENT') console.error('Could not restore desktop widget:', error); }
   window.loadFile(path.join(__dirname, '../shared/index.html'), { query: { desktop: '1' } });
   app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) app.relaunch(); });
 });
 ipcMain.on('window:minimize', () => window.minimize());
 ipcMain.on('window:close', () => window.close());
+ipcMain.handle('widget:get', () => widgetMode);
+ipcMain.handle('widget:set', (_, enabled) => setWidgetMode(Boolean(enabled)));
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
 ipcMain.handle('load', async () => { try { return JSON.parse(await fs.readFile(path.join(app.getPath('userData'), 'grid.json'), 'utf8')); } catch (error) { if (error.code === 'ENOENT') return null; throw error; } });
 ipcMain.handle('save', async (_, data) => { const target = path.join(app.getPath('userData'), 'grid.json'); const temp = target + '.tmp'; await fs.writeFile(temp, JSON.stringify(data), 'utf8'); await fs.rename(temp, target); });

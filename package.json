@@ -14,5 +14,5 @@
     "electron": "^33.4.11",
     "electron-builder": "^26.0.12"
   },
-  "build": { "appId": "com.adysonreales.littlegrid", "productName": "Little Grid", "files": ["desktop/**/*", "shared/**/*"], "win": { "target": "nsis" }, "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true } }
+  "build": { "appId": "com.adysonreales.littlegrid", "productName": "Little Grid", "files": ["desktop/**/*", "shared/**/*"], "asarUnpack": ["desktop/desktop-layer.ps1"], "win": { "target": "nsis" }, "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true } }
 }
