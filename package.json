@@ -8,7 +8,7 @@
     "start": "electron .",
     "build:extension": "node scripts/build-extension.js",
     "test": "node tests/csv.test.js",
-    "dist": "electron-builder --win nsis"
+    "dist": "electron-builder --win nsis --publish never"
   },
   "devDependencies": {
     "electron": "^33.4.11",
