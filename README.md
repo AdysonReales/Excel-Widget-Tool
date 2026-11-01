@@ -6,7 +6,7 @@ An editable Excel-like grid for the Windows startup screen and Opera GX, with a 
 
 ### Download for Windows
 
-[Download Little Grid for Windows (.exe)](https://github.com/AdysonReales/Excel-Widget-Tool/releases/download/v1.0.0-cell-formatting/Little-Grid-Setup.exe)
+[Download Little Grid for Windows (.exe)](https://github.com/AdysonReales/Excel-Widget-Tool/releases/download/v1.0.0-desktop-insert/Little-Grid-Setup.exe)
 
 1. Download and run `Little-Grid-Setup.exe`. Windows may warn you because the installer is not code signed.
 2. Open Little Grid from the Start menu. Node.js and PowerShell are not needed to use the installer.
@@ -46,7 +46,11 @@ Drag the right edge of a column letter to resize the column, or the bottom edge 
 
 Select a cell to format it using the toolbar: font, size, bold, italic, underline, text and fill colors, alignment, border, basic number and percent displays, and color presets. Use Clear to remove its formatting. Cell formatting is saved locally with the sheet.
 
-Import and export use CSV, which Excel can open and save. Import replaces the current sheet after confirmation; CSV export contains the entered values and formula text, but not formatting or dimensions. This lightweight grid does not support multiple sheets, `.xlsx` files, or the full range of Excel formulas. Export CSV regularly for a portable backup.
+In the Windows app, the Edit and Insert toolbar also includes single-cell cut/copy/paste and format painter; a conditional rule that highlights a cell when its value exceeds a threshold; table-style formatting for a selected range; and a pivot summary that groups one column and sums another. The pivot summary is an on-screen view and is not saved as a pivot table. Pictures (PNG, JPEG, and WebP up to 2 MB), simple shapes, two clip-art symbols, a three-step process diagram, and a primary-screen screenshot can be inserted as movable objects. Drag an object's title bar to move it, drag its lower-right corner to resize it, or use × to remove it. Objects save locally with the sheet. The screenshot command captures the entire primary screen after confirmation.
+
+These are simplified tools: table styling does not create a sortable Excel table; the pivot summary is not a full Excel PivotTable; the process diagram is not editable SmartArt; and merge cells, wrap text, and advanced conditional formatting are not yet supported. The Opera GX extension remains at the previous version.
+
+Import and export use CSV, which Excel can open and save. Import replaces the current sheet after confirmation; CSV export contains the entered values and formula text, but not formatting, dimensions, or inserted objects. This lightweight grid does not support multiple sheets, `.xlsx` files, or the full range of Excel formulas. Export CSV regularly for a portable backup of cell contents.
 
 ## Structure
 
@@ -56,4 +60,4 @@ Import and export use CSV, which Excel can open and save. Import replaces the cu
 - `scripts/` — extension build script.
 - `tests/` — CSV parsing and export tests.
 
-After editing shared files, run `npm run build:extension` to refresh the browser copy. Run `npm test` for the CSV and formula tests. On Windows with Microsoft Edge installed, run `npm run test:resize` and `npm run test:format` for the browser-based tests.
+Run `npm test` for the CSV and formula tests. On Windows with Microsoft Edge installed, run `npm run test:resize`, `npm run test:format`, and `npm run test:desktop-extras` for the browser-based tests. Run `npm run test:electron` for an isolated app restart test. The `browser/` folder is the previous Opera version; `npm run build:extension` deliberately updates it from shared source and should only be run when an Opera update is intended.

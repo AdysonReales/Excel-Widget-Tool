@@ -10,6 +10,8 @@
     "test": "node tests/csv.test.js && node tests/formula.test.js",
     "test:resize": "node tests/resize-browser.cjs",
     "test:format": "node tests/format-browser.cjs",
+    "test:desktop-extras": "node tests/desktop-extras-browser.cjs",
+    "test:electron": "node tests/desktop-electron.cjs",
     "dist": "electron-builder --win nsis --publish never"
   },
   "devDependencies": {

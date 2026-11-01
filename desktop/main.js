@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, screen } = require('electron');
+const { app, BrowserWindow, ipcMain, screen, desktopCapturer, session, clipboard } = require('electron');
 const path = require('node:path');
 const fs = require('node:fs/promises');
 const syncFs = require('node:fs');
@@ -19,6 +19,15 @@ async function setWidgetMode(enabled, persist = true) {
   } finally { changingMode = false; }
 }
 app.whenReady().then(async () => {
+  session.defaultSession.setDisplayMediaRequestHandler(async (request, callback) => {
+    try {
+      if (!window || request.frame !== window.webContents.mainFrame) { callback({}); return; }
+      const sources = await desktopCapturer.getSources({ types: ['screen'] });
+      const primary = screen.getPrimaryDisplay().id.toString();
+      const source = sources.find(item => item.display_id === primary) || sources[0];
+      callback(source ? { video: source } : {});
+    } catch (error) { console.error('Could not capture screen:', error); callback({}); }
+  });
   const boundsFile = path.join(app.getPath('userData'), 'window.json');
   let bounds = { width: 720, height: 570 };
   try { const saved = JSON.parse(syncFs.readFileSync(boundsFile, 'utf8')); if (Number.isFinite(saved.x) && Number.isFinite(saved.y) && Number.isFinite(saved.width) && Number.isFinite(saved.height) && screen.getAllDisplays().some(d => saved.x < d.workArea.x + d.workArea.width && saved.y < d.workArea.y + d.workArea.height && saved.x + saved.width > d.workArea.x && saved.y + saved.height > d.workArea.y)) bounds = saved; } catch {}
@@ -32,6 +41,8 @@ ipcMain.on('window:minimize', () => window.minimize());
 ipcMain.on('window:close', () => window.close());
 ipcMain.handle('widget:get', () => widgetMode);
 ipcMain.handle('widget:set', (_, enabled) => setWidgetMode(Boolean(enabled)));
+ipcMain.handle('clipboard:read', event => { if (event.sender !== window.webContents) throw new Error('Invalid sender'); return clipboard.readText(); });
+ipcMain.handle('clipboard:write', (event, value) => { if (event.sender !== window.webContents || typeof value !== 'string') throw new Error('Invalid clipboard request'); clipboard.writeText(value); });
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
 ipcMain.handle('load', async () => { try { return JSON.parse(await fs.readFile(path.join(app.getPath('userData'), 'grid.json'), 'utf8')); } catch (error) { if (error.code === 'ENOENT') return null; throw error; } });
 ipcMain.handle('save', async (_, data) => { const target = path.join(app.getPath('userData'), 'grid.json'); const temp = target + '.tmp'; await fs.writeFile(temp, JSON.stringify(data), 'utf8'); await fs.rename(temp, target); });
