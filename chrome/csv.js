@@ -1,0 +1,5 @@
+(function (root) {
+  function parse(text) { const rows = []; let row = [], field = '', quoted = false; text = text.replace(/^\uFEFF/, ''); for (let i = 0; i < text.length; i++) { const c = text[i]; if (quoted) { if (c === '"' && text[i + 1] === '"') { field += '"'; i++; } else if (c === '"') quoted = false; else field += c; } else if (c === '"' && field === '') quoted = true; else if (c === ',') { row.push(field); field = ''; } else if (c === '\n' || c === '\r') { row.push(field); rows.push(row); row = []; field = ''; if (c === '\r' && text[i + 1] === '\n') i++; } else field += c; } if (quoted) throw new Error('Unclosed quoted field'); if (field !== '' || row.length || !rows.length) { row.push(field); rows.push(row); } return rows; }
+  function stringify(rows) { return rows.map(row => row.map(value => { const s = String(value ?? ''); return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }).join(',')).join('\r\n'); }
+  const api = { parse, stringify }; if (typeof module !== 'undefined') module.exports = api; else root.CSV = api;
+})(globalThis);

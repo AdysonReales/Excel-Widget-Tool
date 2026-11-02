@@ -1,0 +1,8 @@
+{
+  "manifest_version": 3,
+  "name": "Little Grid — Chrome New Tab",
+  "version": "1.0.0",
+  "description": "Your spreadsheet, whiteboard, and to-do list on every new Chrome tab.",
+  "permissions": ["storage"],
+  "chrome_url_overrides": { "newtab": "index.html" }
+}

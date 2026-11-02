@@ -1,6 +1,6 @@
 # Excel-Widget-Tool
 
-An editable Excel-like grid for the Windows startup screen and Opera GX, with a browser to-do list. Cells and tasks save automatically on the device.
+An editable Excel-like grid for Windows, Opera GX, and Chrome, with a browser to-do list. Cells and tasks save automatically on the device.
 
 ## Desktop widget
 
@@ -17,7 +17,7 @@ Drag the widget's top bar to move it; resize it from its edges. It remembers its
 
 If the widget is hidden, select Little Grid on the taskbar to bring it back.
 
-Select **Whiteboard** above the formatting toolbar to sketch, and **Excel** to return to the spreadsheet. Choose Draw or Erase, set a color and size, and sketch on the white canvas. Choose Move and drag to pan across the board; use the mouse wheel or zoom buttons to zoom and Home to return to the starting view. Undo removes the most recent stroke, and Clear all asks for confirmation before removing the drawing. The whiteboard saves locally with the sheet. CSV export includes only spreadsheet cell contents, not the whiteboard. Desktop and Opera keep separate local copies.
+Select **Whiteboard** above the formatting toolbar to sketch, and **Excel** to return to the spreadsheet. Choose Draw or Erase, set a color and size, and sketch on the white canvas. Choose Move and drag to pan across the board; use the mouse wheel or zoom buttons to zoom and Home to return to the starting view. Undo removes the most recent stroke, and Clear all asks for confirmation before removing the drawing. The whiteboard saves locally with the sheet. CSV export includes only spreadsheet cell contents, not the whiteboard. Desktop and each browser keep separate local copies.
 
 ### Run or build from source
 
@@ -47,7 +47,18 @@ After updating this folder, open `opera://extensions`, click the reload button o
 
 To keep an existing unpacked extension's local data, update its existing folder and reload that extension. Loading a separate folder can create a separate extension with separate storage.
 
-The desktop app and browser extension keep **separate** data. Export a CSV in one and import it in the other to transfer spreadsheet values. Browser to-dos are not included in CSV. Removing the extension may remove its data; export the sheet first.
+## Google Chrome extension
+
+[Download the Chrome extension ZIP](https://github.com/AdysonReales/Excel-Widget-Tool/releases/download/v1.0.0-chrome/Little-Grid-Chrome.zip)
+
+1. Extract the ZIP to a folder that will remain on your computer.
+2. Open `chrome://extensions` and turn on **Developer mode**.
+3. Click **Load unpacked** and select the extracted folder containing `manifest.json`.
+4. Open a new Chrome tab to see the spreadsheet, whiteboard, and to-do list.
+
+This is an unpacked extension, not a Chrome Web Store installation. The Chrome version requests local storage permission and replaces the Chrome new-tab page; it does not sign in to Google or synchronize between devices.
+
+The desktop app, Opera GX extension, Chrome extension, and separate browser profiles keep **separate** data. Export a CSV in one and import it in another to transfer spreadsheet values. To-dos, whiteboard drawings, and formatting are not included in CSV. Removing an extension may remove its data; export the sheet first.
 
 ## Spreadsheet notes
 
@@ -68,7 +79,8 @@ Import and export use CSV, which Excel can open and save. Import replaces the cu
 - `shared/` — source for the common UI and spreadsheet logic.
 - `desktop/` — Electron window, local persistence, and startup integration.
 - `browser/` — ready-to-load extension; its UI files are generated from `shared/`.
+- `chrome/` — Chrome new-tab extension; its UI files are generated from `shared/`.
 - `scripts/` — extension build script.
 - `tests/` — CSV parsing and export tests.
 
-Run `npm test` for the CSV and formula tests. On Windows with Microsoft Edge installed, run `npm run test:resize`, `npm run test:format`, `npm run test:desktop-extras`, and `npm run test:whiteboard` for the browser-based tests. Run `npm run test:electron` for an isolated app restart test. The `browser/` folder contains the locally updated Opera extension; `npm run build:extension` refreshes it from shared source.
+Run `npm test` for the CSV and formula tests. On Windows with Microsoft Edge installed, run `npm run test:resize`, `npm run test:format`, `npm run test:desktop-extras`, `npm run test:whiteboard`, and `npm run test:chrome` for the browser-based tests. The last test verifies the Chrome-style new-tab override in an isolated Chromium profile. Run `npm run test:electron` for an isolated app restart test. `npm run build:extension` refreshes both extension folders; `npm run build:chrome` refreshes Chrome only.

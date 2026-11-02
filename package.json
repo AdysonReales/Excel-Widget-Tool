@@ -7,6 +7,7 @@
   "scripts": {
     "start": "electron .",
     "build:extension": "node scripts/build-extension.js",
+    "build:chrome": "node scripts/build-extension.js chrome",
     "test": "node tests/csv.test.js && node tests/formula.test.js && node tests/background.test.js",
     "test:resize": "node tests/resize-browser.cjs",
     "test:format": "node tests/format-browser.cjs",
@@ -14,6 +15,7 @@
     "test:electron": "node tests/desktop-electron.cjs",
     "test:whiteboard": "node tests/whiteboard-browser.cjs && node tests/whiteboard-extension.cjs",
     "test:extension": "node tests/extension-integration.cjs",
+    "test:chrome": "node tests/chrome-extension.cjs",
     "dist": "electron-builder --win nsis --publish never"
   },
   "devDependencies": {
